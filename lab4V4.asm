@@ -109,8 +109,8 @@ main:
     mulsd   xmm0, [rel four]   ; xmm0 = 4*x^2
 
     ; вычислим denom = 2n*(2n-1) в rdx
-    mov     eax, r14d
-    lea     edx, [rax+rax]     ; edx = 2n
+    ;mov     eax, r14d
+    lea     edx, [r14d+r14d]     ; edx = 2n
     mov     ecx, edx
     dec     ecx                ; ecx = 2n-1
     imul    edx, ecx           ; edx = 2n*(2n-1)
