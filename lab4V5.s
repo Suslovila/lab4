@@ -116,7 +116,7 @@ main:
     imul    edx, ecx           ; edx = 2n*(2n-1)
 
     ; переведём denom в double
-    cvtsi2sd xmm1, rdx
+    cvtsi2sd xmm1, edx
 
     ; factor /= denom
     divsd   xmm0, xmm1         ; xmm0 = factor
