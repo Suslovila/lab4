@@ -116,7 +116,10 @@ main:
     imul    edx, ecx           ; edx = 2n*(2n-1)
 
     ; переведём denom в double
-    cvtsi2sd xmm1, edx
+
+    ; хрень
+
+    cvtsi2sd xmm1, rdx
 
     ; factor /= denom
     divsd   xmm0, xmm1         ; xmm0 = factor
@@ -128,9 +131,9 @@ main:
     movsd   [rel term_cur], xmm1
 
     ; проверка |term| < eps?
-    movsd   xmm2, xmm1
+    movsd   xmm0, xmm1
     call    fabs
-    cvtsd2ss xmm3, xmm2
+    cvtsd2ss xmm3, xmm0
     movss   xmm4, [rel eps]
     ucomiss xmm3, xmm4
     jb      .done_series
