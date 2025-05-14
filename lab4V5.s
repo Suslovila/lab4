@@ -96,7 +96,7 @@ have_file:
     ; fprintf first term
     mov     rdi, [rel fp]
     mov     rsi, fmt_file
-    mov     rdx, r14d
+    mov     rdx, r14
     cvtsd2ss xmm0, [rel term_cur]
     cvtss2sd xmm0, xmm0
     mov     eax, 1
@@ -142,7 +142,7 @@ have_file:
     ; fprintf term
     mov     rdi, [rel fp]
     mov     rsi, fmt_file
-    mov     rdx, r14d
+    mov     rdx, r14
     cvtsd2ss xmm0, xmm2
     cvtss2sd xmm0, xmm0
     mov     eax, 1
