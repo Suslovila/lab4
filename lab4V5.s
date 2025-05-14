@@ -1,9 +1,12 @@
+global main
+extern printf, scanf, fopen, fprintf, fclose, fabs
+
 section .data
     fmt_scan:      db "%f",0
     fmt_sum:       db "cos^2(x) ≈ %f",10,0
-    file_text_in:      db "n = %d term = %f",10,0
+    fmt_file:      db "n = %d term = %f",10,0
     fmt_errarg:    db "Usage: %s <terms_file>",10,0
-    file_open_mode:        db "w",0
+    mode_w:        db "w",0
 
     one:           dq 1.0             ; константа 1.0
     four:          dq 4.0             ; для коэффициента 4
@@ -12,10 +15,10 @@ section .data
 section .bss
     x:             resd 1             ; входное x (float)
     eps:           resd 1             ; входная точность (float)
-    accumulated_summ:       resq 1             ; накопленная сумма (double)
-    current_element:      resq 1             ; текущий член ряда (double)
+    sum_res:       resq 1             ; накопленная сумма (double)
+    term_cur:      resq 1             ; текущий член ряда (double)
     x2_val:        resq 1             ; x^2 (double)
-    file_pointer:            resq 1             ; FILE*
+    fp:            resq 1             ; FILE*
 
 section .text
 main:
@@ -51,9 +54,9 @@ main:
 
     ; откроем файл для записи
     mov     rdi, r12
-    mov     rsi, file_open_mode
+    mov     rsi, mode_w
     call    fopen
-    mov     [rel file_pointer], rax
+    mov     [rel fp], rax
     test    rax, rax
     je      .err_fopen
 
@@ -64,9 +67,9 @@ main:
     mulsd   xmm1, xmm1
     movsd   [rel x2_val], xmm1
 
-    ; инициализация суммы: accumulated_summ = 1.0
+    ; инициализация суммы: sum_res = 1.0
     movsd   xmm0, [rel one]
-    movsd   [rel accumulated_summ], xmm0
+    movsd   [rel sum_res], xmm0
 
     xor     r14d, r14d      ; n = 0
 
@@ -74,7 +77,7 @@ main:
     mov     r14d, 1
     movsd   xmm0, [rel x2_val]
     mulsd   xmm0, [rel minus_one]
-    movsd   [rel current_element], xmm0
+    movsd   [rel term_cur], xmm0
 
     ; проверка |term| < eps?
     movsd   xmm1, xmm0
@@ -85,14 +88,14 @@ main:
     jb      .done_series
 
     ; прибавляем к сумме и пишем в файл
-    movsd   xmm0, [rel accumulated_summ]
+    movsd   xmm0, [rel sum_res]
     addsd   xmm0, xmm1
-    movsd   [rel accumulated_summ], xmm0
+    movsd   [rel sum_res], xmm0
 
-    mov     edi, [rel file_pointer]
-    mov     esi, file_text_in
+    mov     edi, [rel fp]
+    mov     esi, fmt_file
     mov     edx, r14d
-    cvtsd2ss xmm0, [rel current_element]
+    cvtsd2ss xmm0, [rel term_cur]
     cvtss2sd xmm0, xmm0
     mov     eax, 1
     call    fprintf
@@ -106,8 +109,8 @@ main:
     mulsd   xmm0, [rel four]   ; xmm0 = 4*x^2
 
     ; вычислим denom = 2n*(2n-1) в rdx
-    ; mov     eax, r14d
-    lea     edx, [r14d+r14d]     ; edx = 2n
+    mov     eax, r14d
+    lea     edx, [rax+rax]     ; edx = 2n
     mov     ecx, edx
     dec     ecx                ; ecx = 2n-1
     imul    edx, ecx           ; edx = 2n*(2n-1)
@@ -118,11 +121,11 @@ main:
     ; factor /= denom
     divsd   xmm0, xmm1         ; xmm0 = factor
 
-    ; current_element *= factor и меняем знак
-    movsd   xmm1, [rel current_element]
+    ; term_cur *= factor и меняем знак
+    movsd   xmm1, [rel term_cur]
     mulsd   xmm1, xmm0
     mulsd   xmm1, [rel minus_one]
-    movsd   [rel current_element], xmm1
+    movsd   [rel term_cur], xmm1
 
     ; проверка |term| < eps?
     movsd   xmm2, xmm1
@@ -133,29 +136,29 @@ main:
     jb      .done_series
 
     ; sum += term
-    movsd   xmm0, [rel accumulated_summ]
+    movsd   xmm0, [rel sum_res]
     addsd   xmm0, xmm1
-    movsd   [rel accumulated_summ], xmm0
+    movsd   [rel sum_res], xmm0
 
     ; запись в файл
-    mov     edi, [rel file_pointer]
-    mov     esi, file_text_in
+    mov     edi, [rel fp]
+    mov     esi, fmt_file
     mov     edx, r14d
     cvtsd2ss xmm0, xmm1
     cvtss2sd xmm0, xmm0
     mov     eax, 1
-    call    file_pointerrintf
+    call    fprintf
 
     jmp     .loop_series
 
 .done_series:
     ; закрываем файл
-    mov     rdi, [rel file_pointer]
+    mov     rdi, [rel fp]
     call    fclose
 
     ; выводим итоговую сумму
     mov     rdi, fmt_sum
-    cvtsd2ss xmm0, [rel accumulated_summ]
+    cvtsd2ss xmm0, [rel sum_res]
     cvtss2sd xmm0, xmm0
     xor     eax, eax
     call    printf
