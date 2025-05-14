@@ -128,9 +128,9 @@ main:
     movsd   [rel term_cur], xmm1
 
     ; проверка |term| < eps?
-    movsd   xmm2, xmm1
+    movsd   xmm0, xmm1
     call    fabs
-    cvtsd2ss xmm3, xmm2
+    cvtsd2ss xmm3, xmm0
     movss   xmm4, [rel eps]
     ucomiss xmm3, xmm4
     jb      .done_series
