@@ -115,7 +115,7 @@ loop_series:
     mov     r9d, r8d
     dec     r9d                         ; 2n-1
     imul    r8d, r9d                    ; 2n*(2n-1)
-    mov     rdx, r8d
+    mov     rdx, r8
     cvtsi2sd xmm1, rdx
     divsd   xmm0, xmm1
     mulsd   xmm0, [rel minus_one]       ; меняем знак
