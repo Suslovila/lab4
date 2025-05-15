@@ -10,7 +10,9 @@ section .data
   fmt_errarg: db      "Usage: %s <terms_file>", 10,0
   fmt_erra:   db      "Error: a must be > 0", 10,0
   mode_w:     db      "w",0
-  one:        dq      1.0
+    one:           dq 1.0             ; константа 1.0
+    four:          dq 4.0             ; для коэффициента 4
+    minus_one:     dq -1.0            ; для смены знака
 
 section .bss
   a:          resd    1
