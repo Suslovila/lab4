@@ -74,9 +74,6 @@ main:
 
 
 
-
-
-
   mov     rdi, breakPoint_id
   mov     rsi, [rsp+16]
   xor     eax, eax
@@ -89,31 +86,6 @@ main:
 
 
 
-
-
-;   ;проверка на a > 0
-;   movss   xmm0, [rel a]
-;     pxor    xmm1, xmm1
-;     ucomiss xmm0, xmm1
-;     jbe     .err_a_le0
-
-  ;pow_res = точное вычисление
-;   movss    xmm0, [rel a]
-;     cvtps2pd xmm0, xmm0       
-;     movss    xmm1, [rel x]
-;     cvtps2pd xmm1, xmm1        
-;     call    pow               
-;     movsd   [rel pow_res], xmm0
-  ;считаем ln(a)
-;   movss    xmm0, [rel a]
-;     cvtps2pd xmm0, xmm0
-;     call     log
-;     movsd    xmm1, xmm0    
-;     ;считаем x * ln(a)      
-;     movss    xmm0, [rel x]
-;     cvtps2pd xmm0, xmm0         
-;     mulsd    xmm0, xmm1     
-;     movsd    [rel t_val], xmm0
   ;начальные значения term = sum = 1.0
     movsd   xmm0, [rel one]
   movsd   [rel term_cur], xmm0
@@ -131,14 +103,11 @@ main:
 
 
 movss   xmm0, [rel x]
-    cvtps2pd xmm0, xmm0
+    cvtss2sd xmm0, xmm0
     movapd  xmm1, xmm0
     mulsd   xmm1, xmm1
     movsd   [rel x2_val], xmm1
 
-; инициализация суммы: sum_res = 1.0
-    movsd   xmm0, [rel one]
-    movsd   [rel sum_res], xmm0
 
 
 ;цикл разложения
