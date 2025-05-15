@@ -49,14 +49,6 @@ main:
 
   mov     rbx, rsi        
     mov     r12, [rbx + 8]    ;в r12 имя исходного файла
-    ;ввод a
-
-
-    ; mov     rdi, fmt_scan
-    ; lea     rsi, [rel a]
-    ; xor     eax, eax
-    ; call    scanf
-
 
     ;ввод x
     mov     rdi, fmt_scan
@@ -71,25 +63,6 @@ main:
 
 
 
-
-
-
-  mov     rdi, breakPoint_id
-  mov     rsi, [rsp+16]
-  xor     eax, eax
-    call    printf
-
-
-
-
-
-
-
-
-  ;начальные значения term = sum = 1.0
-    movsd   xmm0, [rel one]
-  movsd   [rel term_cur], xmm0
-    movsd   [rel sum_res], xmm0
   ;открываем файл для записи членов ряда
   mov     rdi, r12          
     mov     rsi, mode_w
@@ -97,9 +70,11 @@ main:
     mov     [rel fp], rax
     test    rax, rax
     je      .err_fopen
-    
-    xor     r14d, r14d  
 
+
+
+    ; xor     r14d, r14d  
+    mov   r14d, 1 
 
 
 movss   xmm0, [rel x]
@@ -110,19 +85,54 @@ movss   xmm0, [rel x]
 
 
 
+  ;начальные значения term = -x^2, summ = 1 - x^2
+    ; movsd   xmm0, [rel one]
+;   movsd   [rel term_cur], xmm0
+    ; movsd   [rel sum_res], xmm0
+
+
+
+
+    movsd   xmm0, [rel x2_val]      ; xmm0 = x^2
+    mulsd   xmm0, [rel minus_one]   ; xmm0 = -x^2
+    movsd   [rel term_cur], xmm0    ; term_cur := a₁ = -x^2
+
+    movsd   xmm1, xmm0              ; xmm1 = a₁
+    movsd   xmm0, [rel one]     ; xmm0 = 1.0  (предыдущая sum_res)
+    addsd   xmm0, xmm1              ; xmm0 = 1 + a₁
+    movsd   [rel sum_res], xmm0     ; sum_res := 1 + a₁
+
+
+
 ;цикл разложения
 .loop_series:
 
 
-  mov     rdi, breakPoint_id
-  mov     rsi, [rsp+16]
-  xor     eax, eax
-    call    printf
+    ; mov     rdi, fmt_sum
+    ; cvtsd2ss xmm0, [rel x2_val]
+    ; cvtss2sd xmm0, xmm0
+    ; mov     eax, 1
+    ; call    printf
 
+    ; xor     eax, eax
+
+
+    ; mov     rdi, fmt_sum
+    ; cvtsd2ss xmm0, [rel sum_res]
+    ; cvtss2sd xmm0, xmm0
+    ; mov     eax, 1
+    ; call    printf
+
+    ; xor     eax, eax
+
+
+;   mov     rdi, breakPoint_id
+;   mov     rsi, [rsp+16]
+;   xor     eax, eax
+;     call    printf
 
 
   inc     r14d
-
 
     ; factor = (4 * x^2) / (2n*(2n-1))
     movsd   xmm0, [rel x2_val]
@@ -148,21 +158,6 @@ movss   xmm0, [rel x]
     mulsd   xmm1, xmm0
     mulsd   xmm1, [rel minus_one]
     movsd   [rel term_cur], xmm1
-
-    ; проверка |term| < eps?
-
-    ; movsd   xmm2, xmm1
-    ; call    fabs
-    ; cvtsd2ss xmm3, xmm2
-    ; movss   xmm4, [rel eps]
-    ; ucomiss xmm3, xmm4
-    ; jb      .done_series
-
-    ; sum += term
-    ; movsd   xmm0, [rel sum_res]
-    ; addsd   xmm0, xmm1
-    ; movsd   [rel sum_res], xmm0
-
 
     
   ;sum += term staroye
