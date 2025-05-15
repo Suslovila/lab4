@@ -16,10 +16,10 @@ section .bss
   a:          resd    1
   x:          resd    1
   eps:        resd    1
-  pow_res:    resq    1    ;для pow(a, x) 
   sum_res:    resq    1    ;для накопления суммы
   term_cur:   resq    1    ;текущий член ряда
-  t_val:      resq    1    ;для x * ln(a)
+  x2_val:        resq 1             ; x^2 (double)
+
   fp:         resq    1    
 
 section .text
@@ -42,10 +42,14 @@ main:
   mov     rbx, rsi        
     mov     r12, [rbx + 8]    ;в r12 имя исходного файла
     ;ввод a
-    mov     rdi, fmt_scan
-    lea     rsi, [rel a]
-    xor     eax, eax
-    call    scanf
+
+
+    ; mov     rdi, fmt_scan
+    ; lea     rsi, [rel a]
+    ; xor     eax, eax
+    ; call    scanf
+
+
     ;ввод x
     mov     rdi, fmt_scan
     lea     rsi, [rel x]
@@ -56,28 +60,29 @@ main:
     lea     rsi, [rel eps]
     xor     eax, eax
     call    scanf
-  ;проверка на a > 0
-  movss   xmm0, [rel a]
-    pxor    xmm1, xmm1
-    ucomiss xmm0, xmm1
-    jbe     .err_a_le0
+;   ;проверка на a > 0
+;   movss   xmm0, [rel a]
+;     pxor    xmm1, xmm1
+;     ucomiss xmm0, xmm1
+;     jbe     .err_a_le0
+
   ;pow_res = точное вычисление
-  movss    xmm0, [rel a]
-    cvtps2pd xmm0, xmm0       
-    movss    xmm1, [rel x]
-    cvtps2pd xmm1, xmm1        
-    call    pow               
-    movsd   [rel pow_res], xmm0
+;   movss    xmm0, [rel a]
+;     cvtps2pd xmm0, xmm0       
+;     movss    xmm1, [rel x]
+;     cvtps2pd xmm1, xmm1        
+;     call    pow               
+;     movsd   [rel pow_res], xmm0
   ;считаем ln(a)
-  movss    xmm0, [rel a]
-    cvtps2pd xmm0, xmm0
-    call     log
-    movsd    xmm1, xmm0    
-    ;считаем x * ln(a)      
-    movss    xmm0, [rel x]
-    cvtps2pd xmm0, xmm0         
-    mulsd    xmm0, xmm1     
-    movsd    [rel t_val], xmm0
+;   movss    xmm0, [rel a]
+;     cvtps2pd xmm0, xmm0
+;     call     log
+;     movsd    xmm1, xmm0    
+;     ;считаем x * ln(a)      
+;     movss    xmm0, [rel x]
+;     cvtps2pd xmm0, xmm0         
+;     mulsd    xmm0, xmm1     
+;     movsd    [rel t_val], xmm0
   ;начальные значения term = sum = 1.0
     movsd   xmm0, [rel one]
   movsd   [rel term_cur], xmm0
@@ -94,17 +99,54 @@ main:
 ;цикл разложения
 .loop_series:
   inc     r14d  
-  ;term *= t_val / n            
-    movsd   xmm0, [rel t_val]
-    cvtsi2sd xmm1, r14d
-    divsd   xmm0, xmm1         
+    ; factor = (4 * x^2) / (2n*(2n-1))
+    movsd   xmm0, [rel x2_val]
+    mulsd   xmm0, [rel four]   ; xmm0 = 4*x^2
+
+    ; вычислим denom = 2n*(2n-1) в rdx
+    ;mov     eax, r14d
+    lea     edx, [r14d+r14d]     ; edx = 2n
+    mov     ecx, edx
+    dec     ecx                ; ecx = 2n-1
+    imul    edx, ecx           ; edx = 2n*(2n-1)
+
+    ; переведём denom в double
+
+    ; хрень
+    cvtsi2sd xmm1, rdx
+
+    ; factor /= denom
+    divsd   xmm0, xmm1         ; xmm0 = factor
+
+    ; term_cur *= factor и меняем знак
     movsd   xmm1, [rel term_cur]
-    mulsd   xmm1, xmm0         
-    movsd   [rel term_cur], xmm1    
-  ;sum += term
+    mulsd   xmm1, xmm0
+    mulsd   xmm1, [rel minus_one]
+    movsd   [rel term_cur], xmm1
+
+    ; проверка |term| < eps?
+    
+    ; movsd   xmm2, xmm1
+    ; call    fabs
+    ; cvtsd2ss xmm3, xmm2
+    ; movss   xmm4, [rel eps]
+    ; ucomiss xmm3, xmm4
+    ; jb      .done_series
+
+    ; sum += term
+    ; movsd   xmm0, [rel sum_res]
+    ; addsd   xmm0, xmm1
+    ; movsd   [rel sum_res], xmm0
+
+
+    
+  ;sum += term staroye
     movsd   xmm0, [rel sum_res]
     addsd   xmm0, xmm1
     movsd   [rel sum_res], xmm0
+
+
+
     ;если term < eps конец
     movsd   xmm0, xmm1
     call    fabs
