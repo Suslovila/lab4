@@ -102,34 +102,17 @@ movss   xmm0, [rel x]
     addsd   xmm0, xmm1              ; xmm0 = 1 + a₁
     movsd   [rel sum_res], xmm0     ; sum_res := 1 + a₁
 
-
+    mov     rdi, [rel fp]
+    mov     rsi, fmt_file
+    mov     edx, r14d
+    cvtsd2ss xmm0, [rel term_cur]
+    cvtss2sd xmm0, xmm0
+    mov     eax, 1             
+    call    fprintf
 
 ;цикл разложения
 .loop_series:
 
-
-    ; mov     rdi, fmt_sum
-    ; cvtsd2ss xmm0, [rel x2_val]
-    ; cvtss2sd xmm0, xmm0
-    ; mov     eax, 1
-    ; call    printf
-
-    ; xor     eax, eax
-
-
-    ; mov     rdi, fmt_sum
-    ; cvtsd2ss xmm0, [rel sum_res]
-    ; cvtss2sd xmm0, xmm0
-    ; mov     eax, 1
-    ; call    printf
-
-    ; xor     eax, eax
-
-
-;   mov     rdi, breakPoint_id
-;   mov     rsi, [rsp+16]
-;   xor     eax, eax
-;     call    printf
 
 
   inc     r14d
