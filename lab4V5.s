@@ -127,6 +127,20 @@ main:
     je      .err_fopen
     
     xor     r14d, r14d  
+
+
+
+movss   xmm0, [rel x]
+    cvtps2pd xmm0, xmm0
+    movapd  xmm1, xmm0
+    mulsd   xmm1, xmm1
+    movsd   [rel x2_val], xmm1
+
+    ; инициализация суммы: sum_res = 1.0
+    movsd   xmm0, [rel one]
+    movsd   [rel sum_res], xmm0
+
+
 ;цикл разложения
 .loop_series:
 
@@ -138,7 +152,9 @@ main:
 
 
 
-  inc     r14d  
+  inc     r14d
+
+
     ; factor = (4 * x^2) / (2n*(2n-1))
     movsd   xmm0, [rel x2_val]
     mulsd   xmm0, [rel four]   ; xmm0 = 4*x^2
