@@ -9,10 +9,14 @@ section .data
   fmt_file:   db      "n = %d term = %f", 10,0
   fmt_errarg: db      "Usage: %s <terms_file>", 10,0
   fmt_erra:   db      "Error: a must be > 0", 10,0
+
+
+    breakPoint_id:   db      "breakpoint", 10,0
+
+
+
   mode_w:     db      "w",0
-    one:           dq 1.0             ; константа 1.0
-    four:          dq 4.0             ; для коэффициента 4
-    minus_one:     dq -1.0            ; для смены знака
+  one:        dq      1.0
 
 section .bss
   a:          resd    1
@@ -62,6 +66,29 @@ main:
     lea     rsi, [rel eps]
     xor     eax, eax
     call    scanf
+
+
+
+
+
+
+
+
+
+  mov     rdi, breakPoint_id
+  mov     rsi, [rsp+16]
+  xor     eax, eax
+    call    printf
+
+
+
+
+
+
+
+
+
+
 ;   ;проверка на a > 0
 ;   movss   xmm0, [rel a]
 ;     pxor    xmm1, xmm1
@@ -100,6 +127,15 @@ main:
     xor     r14d, r14d  
 ;цикл разложения
 .loop_series:
+
+
+  mov     rdi, breakPoint_id
+  mov     rsi, [rsp+16]
+  xor     eax, eax
+    call    printf
+
+
+    
   inc     r14d  
     ; factor = (4 * x^2) / (2n*(2n-1))
     movsd   xmm0, [rel x2_val]
@@ -127,7 +163,7 @@ main:
     movsd   [rel term_cur], xmm1
 
     ; проверка |term| < eps?
-    
+
     ; movsd   xmm2, xmm1
     ; call    fabs
     ; cvtsd2ss xmm3, xmm2
