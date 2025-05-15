@@ -145,7 +145,7 @@ movss   xmm0, [rel x]
 .loop_series:
 
 
-  mov     rdi, breakPoint_id
+  mov     rdi, term_cur
   mov     rsi, [rsp+16]
   xor     eax, eax
     call    printf
