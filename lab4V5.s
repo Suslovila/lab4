@@ -16,7 +16,9 @@ section .data
 
 
   mode_w:     db      "w",0
-  one:        dq      1.0
+    one:           dq 1.0             ; константа 1.0
+    four:          dq 4.0             ; для коэффициента 4
+    minus_one:     dq -1.0            ; для смены знака
 
 section .bss
   a:          resd    1
@@ -135,7 +137,7 @@ main:
     call    printf
 
 
-    
+
   inc     r14d  
     ; factor = (4 * x^2) / (2n*(2n-1))
     movsd   xmm0, [rel x2_val]
