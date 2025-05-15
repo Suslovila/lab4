@@ -136,7 +136,7 @@ movss   xmm0, [rel x]
     mulsd   xmm1, xmm1
     movsd   [rel x2_val], xmm1
 
-    ; инициализация суммы: sum_res = 1.0
+; инициализация суммы: sum_res = 1.0
     movsd   xmm0, [rel one]
     movsd   [rel sum_res], xmm0
 
@@ -145,7 +145,7 @@ movss   xmm0, [rel x]
 .loop_series:
 
 
-  mov     rdi, term_cur
+  mov     rdi, breakPoint_id
   mov     rsi, [rsp+16]
   xor     eax, eax
     call    printf
