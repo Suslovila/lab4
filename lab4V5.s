@@ -58,8 +58,15 @@ main:
 
 
 movss   xmm0, [rel x] 
-cvtss2sd xmm0, xmm0
 
+mov rdi, fmt_lib_result
+cvtsd2ss xmm0, xmm0
+cvtss2sd xmm0, xmm0
+xor eax, eax
+call printf
+
+
+cvtss2sd xmm0, xmm0
 call    cos
 
 ; возводим в квадрат
