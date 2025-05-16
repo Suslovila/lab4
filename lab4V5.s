@@ -62,6 +62,7 @@ movss   xmm0, [rel x]
 mov rdi, fmt_lib_result
 cvtss2sd xmm0, xmm0
 xor eax, eax
+mov eax, 1
 call printf
 
 
