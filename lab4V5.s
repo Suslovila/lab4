@@ -55,6 +55,24 @@ main:
     xor     eax, eax
     call    scanf
 
+
+
+movss   xmm0, [rel x] 
+cvtss2sd xmm0, xmm0
+
+call    cos
+
+; возводим в квадрат
+movapd  xmm1, xmm0      
+mulsd   xmm0, xmm1 
+
+mov rdi, fmt_lib_result
+cvtsd2ss xmm0, xmm0
+cvtss2sd xmm0, xmm0
+xor eax, eax
+call printf
+
+
   ;открываем файл для записи членов ряда
   mov     rdi, r12          
     mov     rsi, mode_w
@@ -166,36 +184,9 @@ movss   xmm0, [rel x]
     call    printf
 
     xor     eax, eax
-    
 
 
 
-movss   xmm0, [rel x] 
-
-mov rdi, fmt_lib_result
-cvtsd2ss xmm0, xmm0
-cvtss2sd xmm0, xmm0
-xor eax, eax
-call printf
-
-
-call    cos
-
-mov rdi, fmt_lib_result
-cvtsd2ss xmm0, xmm0
-cvtss2sd xmm0, xmm0
-xor eax, eax
-call printf
-
-; возводим в квадрат
-movapd  xmm1, xmm0      
-mulsd   xmm0, xmm1 
-
-mov rdi, fmt_lib_result
-cvtsd2ss xmm0, xmm0
-cvtss2sd xmm0, xmm0
-xor eax, eax
-call printf
 
 
 
