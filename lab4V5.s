@@ -80,6 +80,8 @@ mov rdi, fmt_lib_result
 cvtsd2ss xmm0, xmm0
 cvtss2sd xmm0, xmm0
 xor eax, eax
+mov eax, 1
+
 call printf
 
 
