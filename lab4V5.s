@@ -171,7 +171,6 @@ movss   xmm0, [rel x]
 
 
 movss   xmm0, [rel x] 
-cvtss2sd xmm0, xmm0
 
 call    cos
 
