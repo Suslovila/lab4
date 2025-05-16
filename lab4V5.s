@@ -18,7 +18,7 @@ section .bss
   x:          resd    1
   eps:        resd    1
   sum_res:    resq    1    ;итоговая сумма
-  term_cur:   resq    1    ;текущий член ряда
+  current_member:   resq    1    ;текущий член ряда
   x2_val:        resq 1             ; x^2 (double)
 
   fp:         resq    1    
@@ -75,7 +75,7 @@ movss   xmm0, [rel x]
 
     movsd   xmm0, [rel x2_val]      ; xmm0 = x^2
     mulsd   xmm0, [rel minus_one]   ; xmm0 = -x^2
-    movsd   [rel term_cur], xmm0    ; term_cur := a = -x^2
+    movsd   [rel current_member], xmm0    ; current_member := a = -x^2
 
     movsd   xmm1, xmm0              ; xmm1 = a
     movsd   xmm0, [rel one]     ; xmm0 = 1.0
@@ -87,7 +87,7 @@ movss   xmm0, [rel x]
     mov     rdi, [rel fp]
     mov     rsi, fmt_file
     mov     edx, r14d
-    cvtsd2ss xmm0, [rel term_cur]
+    cvtsd2ss xmm0, [rel current_member]
     cvtss2sd xmm0, xmm0
     mov     eax, 1             
     call    fprintf
@@ -113,11 +113,16 @@ movss   xmm0, [rel x]
     ; factor /= denom
     divsd   xmm0, xmm1         ; xmm0 = factor
 
-    ; term_cur *= factor и меняем знак
-    movsd   xmm1, [rel term_cur]
+    ; current_member *= factor и меняем знак
+    
+    ; сохраним предыдущий член
+    movsd   xmm3, [rel current_member]
+
+    ; далее операции 
+    movsd   xmm1, [rel current_member]
     mulsd   xmm1, xmm0
     mulsd   xmm1, [rel minus_one]
-    movsd   [rel term_cur], xmm1
+    movsd   [rel current_member], xmm1
 
     
   ;sum += term
@@ -128,6 +133,8 @@ movss   xmm0, [rel x]
 
     ;если term < eps конец
     movsd   xmm0, xmm1
+    subsd xmm0, xmm3
+    
     call    fabs
     cvtsd2ss xmm1, xmm0       
     movss   xmm2, [rel eps]
@@ -138,7 +145,7 @@ movss   xmm0, [rel x]
     mov     rdi, [rel fp]
     mov     rsi, fmt_file
     mov     edx, r14d
-    cvtsd2ss xmm0, [rel term_cur]
+    cvtsd2ss xmm0, [rel current_member]
     cvtss2sd xmm0, xmm0
     mov     eax, 1             
     call    fprintf
