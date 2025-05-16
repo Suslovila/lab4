@@ -73,7 +73,7 @@ mov eax, 1
 call printf
 
 ; возводим в квадрат
-movapd  xmm1, xmm0      
+movsd  xmm1, xmm0      
 mulsd   xmm0, xmm1 
 
 mov rdi, fmt_lib_result
