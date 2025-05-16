@@ -1,12 +1,13 @@
 global main
 extern printf, scanf, fopen, fprintf, fclose
-extern fabs
+extern fabs, cos
 
 section .data
   fmt_scan:   db      "%f",0
   fmt_sum:    db      "series sum = %f", 10,0
   fmt_file:   db      "n = %d term = %f", 10,0
   fmt_errarg: db      "Usage: %s <terms_file>", 10,0
+  fmt_lib_result: db      "Result from lib: ", 10,0
 
 
   mode_w:     db      "w",0
@@ -134,7 +135,7 @@ movss   xmm0, [rel x]
     ;если term < eps конец
     movsd   xmm0, xmm1
     subsd xmm0, xmm3
-    
+
     call    fabs
     cvtsd2ss xmm1, xmm0       
     movss   xmm2, [rel eps]
@@ -166,6 +167,26 @@ movss   xmm0, [rel x]
 
     xor     eax, eax
     
+
+
+
+movss   xmm0, [rel x] 
+cvtss2sd xmm0, xmm0
+
+call    cos
+
+; возводим в квадрат
+movapd  xmm1, xmm0      
+mulsd   xmm0, xmm1 
+
+mov rdi, fmt_lib_result
+cvtsd2ss xmm0, xmm0
+cvtss2sd xmm0, xmm0
+xor eax, eax
+call printf
+
+
+
 .exit:
   mov rsp, rbp
   pop rbp
