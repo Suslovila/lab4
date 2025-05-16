@@ -78,6 +78,7 @@ mulsd   xmm0, xmm1
 
 mov rdi, fmt_lib_result
 xor eax, eax
+mov eax, 1
 call printf
 
 
