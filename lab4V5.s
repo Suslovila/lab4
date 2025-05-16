@@ -7,7 +7,7 @@ section .data
   fmt_sum:    db      "series sum = %f", 10,0
   fmt_file:   db      "n = %d term = %f", 10,0
   fmt_errarg: db      "Usage: %s <terms_file>", 10,0
-  fmt_lib_result: db      "Result from lib: ", 10,0
+  fmt_lib_result: db      "Result from lib: = %f", 10,0
 
 
   mode_w:     db      "w",0
