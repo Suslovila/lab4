@@ -70,6 +70,7 @@ call cos
 mov rdi, fmt_lib_result
 xor eax, eax
 mov eax, 1
+
 call printf
 
     ; возводим в квадрат (double)
@@ -77,6 +78,7 @@ call printf
 
     mov     rdi, fmt_lib_result 
     xor     eax, eax
+    mov eax, 1
     call    printf
 
 
