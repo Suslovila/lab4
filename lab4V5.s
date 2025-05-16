@@ -71,7 +71,7 @@ mov rdi, fmt_lib_result
 xor eax, eax
 mov eax, 1
 
-call printf
+; call printf
 
     ; возводим в квадрат (double)
     mulsd    xmm0, xmm0 
