@@ -67,6 +67,7 @@ call printf
 
 
 call    cos
+cvtss2sd xmm0, xmm0
 
 mov rdi, fmt_lib_result
 cvtss2sd xmm0, xmm0
