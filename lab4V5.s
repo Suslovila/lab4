@@ -77,7 +77,6 @@ movsd  xmm1, xmm0
 mulsd   xmm0, xmm1 
 
 mov rdi, fmt_lib_result
-cvtss2sd xmm0, xmm0
 xor eax, eax
 call printf
 
