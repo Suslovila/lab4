@@ -175,6 +175,12 @@ cvtss2sd xmm0, xmm0
 
 call    cos
 
+mov rdi, fmt_lib_result
+cvtsd2ss xmm0, xmm0
+cvtss2sd xmm0, xmm0
+xor eax, eax
+call printf
+
 ; возводим в квадрат
 movapd  xmm1, xmm0      
 mulsd   xmm0, xmm1 
