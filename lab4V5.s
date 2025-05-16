@@ -66,11 +66,9 @@ mov eax, 1
 call printf
 
 
-call    cos
-cvtss2sd xmm0, xmm0
+call cos
 
 mov rdi, fmt_lib_result
-cvtss2sd xmm0, xmm0
 xor eax, eax
 mov eax, 1
 call printf
